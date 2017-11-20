@@ -67,8 +67,8 @@ class Login_Ip_Restriction {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'PLUGIN_NAME_VERSION' ) ) {
-			$this->version = PLUGIN_NAME_VERSION;
+		if ( defined( 'LIR_PLUGIN_NAME_VERSION' ) ) {
+			$this->version = LIR_PLUGIN_NAME_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
@@ -216,18 +216,18 @@ class Login_Ip_Restriction {
 		return $this->version;
 	}
 	
-	public function add_fields_to_user(){ 
-		$user_id = $_GET['user_id'];
+	public function add_fields_to_user(){
+		$user_id = sanitize_text_field($_GET['user_id']);
 		?>
 			<h3><?php _e("User IP Address Access Restriction", "blank"); ?></h3>
 			<table class="form-table">
-			<tr>
-				<th><label for="address"><?php _e("IP Address"); ?></label></th>
-				<td>
-					<textarea name="ip_address" id="ip_address" value="<?php echo the_author_meta( 'ip_address', $user_id ); ?>" class="regular-text" ><?php echo the_author_meta( 'ip_address', $user_id ); ?></textarea><br />
-					<span class="description"><?php _e("<br/> 1. For IP Range calculator, use <a href='http://networkcalculator.ca/ip-calculator.php' target='_blank'>this site.</a>  <br/>2. Each IP Address must be Separated by comma"); ?></span>
-				</td>
-			</tr>
+				<tr>
+					<th><label for="address"><?php _e("IP Address"); ?></label></th>
+					<td>
+						<textarea name="ip_address" id="ip_address" value="<?php echo esc_html(the_author_meta( 'ip_address', $user_id )); ?>" class="regular-text" ><?php echo esc_html(the_author_meta( 'ip_address', $user_id )); ?></textarea><br />
+						<span class="description"><?php _e("<br/> 1. For IP Range calculator, use <a href='http://networkcalculator.ca/ip-calculator.php' target='_blank'>this site.</a>  <br/>2. Each IP Address must be Separated by comma"); ?></span>
+					</td>
+				</tr>
 			</table>
 		<?php		
 	}
@@ -236,18 +236,18 @@ class Login_Ip_Restriction {
 		?>
 			<h3><?php _e("Profile IP Address Access Restriction", "blank"); ?></h3>
 			<table class="form-table">
-			<tr>
-				<th><label for="address"><?php _e("IP Address"); ?></label></th>
-				<td>
-					<textarea name="ip_address" id="ip_address" value="<?php echo the_author_meta( 'ip_address', $user_id ); ?>" class="regular-text" ><?php echo the_author_meta( 'ip_address', $user_id ); ?></textarea><br />
-					<span class="description"><?php _e("<br/> 1. For IP Range calculator, use <a href='http://networkcalculator.ca/ip-calculator.php' target='_blank'>this site.</a>  <br/>2. Each IP Address must be Separated by comma"); ?></span>
-				</td>
-			</tr>
+				<tr>
+					<th><label for="address"><?php _e("IP Address"); ?></label></th>
+					<td>
+						<textarea name="ip_address" id="ip_address" value="<?php echo esc_html(the_author_meta( 'ip_address', $user_id )); ?>" class="regular-text" ><?php echo esc_html(the_author_meta( 'ip_address', $user_id )); ?></textarea><br />
+						<span class="description"><?php _e("<br/> 1. For IP Range calculator, use <a href='http://networkcalculator.ca/ip-calculator.php' target='_blank'>this site.</a>  <br/>2. Each IP Address must be Separated by comma"); ?></span>
+					</td>
+				</tr>
 			</table>
 		<?php		
 	}
 	function login_restriction( $user, $password ){
-		$ip_add_textarea = get_user_meta($user->ID, 'ip_address',true);
+		$ip_add_textarea = sanitize_text_field(get_user_meta($user->ID, 'ip_address',true));
 		$ip_add_array = explode(",",$ip_add_textarea);
 		$client_ip = $this->get_client_ip();
 		 
@@ -295,9 +295,9 @@ class Login_Ip_Restriction {
 		return array_map('long2ip', range($start, $end) );
 	}
 	function get_client_ip(){
-		$client  = @$_SERVER['HTTP_CLIENT_IP'];
-		$forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
-		$remote  = $_SERVER['REMOTE_ADDR'];
+		$client  = sanitize_text_field(@$_SERVER['HTTP_CLIENT_IP']);
+		$forward = sanitize_text_field(@$_SERVER['HTTP_X_FORWARDED_FOR']);
+		$remote  = sanitize_text_field($_SERVER['REMOTE_ADDR']);
 
 		if(filter_var($client, FILTER_VALIDATE_IP)){
 			$ip = $client;
@@ -316,11 +316,11 @@ class Login_Ip_Restriction {
 	function save_user_ip_address($user_id) {
 		if ( !current_user_can( 'edit_user', $user_id ) )
 			return false; 
-		update_user_meta ( $user_id, 'ip_address', $_POST['ip_address'] );
+		update_user_meta ( $user_id, 'ip_address', sanitize_text_field($_POST['ip_address']) );
 	}	
 	function save_profile_ip_address() {
 		$user_id = get_current_user_id(); 
-		update_user_meta ( $user_id, 'ip_address', $_POST['ip_address'] );
+		update_user_meta ( $user_id, 'ip_address', sanitize_text_field($_POST['ip_address']) );
 	}
 	public function execute_hooks(){
 		//Field Hooks
