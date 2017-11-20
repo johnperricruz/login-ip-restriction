@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Login IP Restriction
  * Plugin URI:        https://github.com/johnperricruz/login-ip-restriction
- * Description:       IP Address based Restriction custom made by John Perri Cruz
+ * Description:       IP Address based User Login Restriction, supports IP Ranges.
  * Version:           1.0.0
  * Author:            John Perri Cruz
  * Author URI:        https://www.johnperricruz.com
@@ -30,7 +30,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'PLUGIN_NAME_VERSION', '1.0.0' );
+define( 'LIR_PLUGIN_NAME_VERSION', '1.0.0' );
 
 /**
  * The code that runs during plugin activation.
